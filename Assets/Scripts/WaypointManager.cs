@@ -5,8 +5,9 @@ public struct Link
 {
     public enum direction
     {
-        UNI,
-        BI
+        BI = 0,
+        UNI = 1,
+        
     };
 
     public GameObject node1;

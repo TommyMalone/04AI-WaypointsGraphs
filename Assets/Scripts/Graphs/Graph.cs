@@ -12,6 +12,11 @@ public class Graph
         
     }
 
+    public List<Node> GetPathList()
+    {
+        return _pathList;
+    }
+
     public void AddNode(GameObject id)
     {
         Node node = new Node(id);
@@ -68,15 +73,15 @@ public class Graph
             open.Add(start);
             while (open.Count > 0)
             {
-                int i = lowestF(open);
-                Node thisNode = open[i];
+                int indexOfLowestF = FindIndexOfLowestF(open);
+                Node thisNode = open[indexOfLowestF];
                 if (thisNode.GetId() == endId)
                 {
                     ReconstructPath(start, end);
                     return true;
                 }
 
-                open.RemoveAt(i);
+                open.RemoveAt(indexOfLowestF);
                 closed.Add(thisNode);
                 Node neighbor;
                 foreach (Edge edge in thisNode.edges)
@@ -132,7 +137,7 @@ public class Graph
         return Vector3.SqrMagnitude(a.GetId().transform.position - b.GetId().transform.position);
     }
     
-    int lowestF(List<Node> nodes)
+    int FindIndexOfLowestF(List<Node> nodes)
     {
         float lowestF = 0;
         int count = 0;

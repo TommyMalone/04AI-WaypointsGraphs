@@ -1,55 +1,55 @@
+using System;
 using UnityEngine;
 
 public class FollowWaypoint : MonoBehaviour
 {
-    public GameObject[] waypoints;
-    int _currentWaypointIndex = 0;
-    public float speed = 10f;
-    public float rotationalSpeed = 5f;
-    public int waypointArrivalThreshold = 5;
-    private GameObject _tracker;
-    private int _trackerSpeedBoost = 2;
-    public float lookAhead = 10f;
+    private Transform _target;
+    private float _speed = 10f;
+    private float _accuracy = 3f;
+    private float _rotationalSpeed = 5f;
+
+    public GameObject waypointManager;
+    private GameObject[] _waypoints;
+    private GameObject _currentNode;
+    private int _currentWaypointInPath = 0;
+    private Graph _navigationGraph;
+    
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _tracker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        DestroyImmediate(_tracker.GetComponent<Collider>());
-        _tracker.transform.position = transform.position;
-        _tracker.transform.rotation = transform.rotation;
+        _waypoints = waypointManager.GetComponent<WaypointManager>().waypoints;
+        _navigationGraph = waypointManager.GetComponent<WaypointManager>().graph;
+        _currentNode = _waypoints[_currentWaypointInPath];
     }
 
-    void ProgressTracker()
+    public void GoToWaypoint(int index)
     {
-        if (Vector3.Distance(_tracker.transform.position, transform.position) < lookAhead)
+        //We are starting on a new path
+        _currentWaypointInPath = 0;
+
+        _navigationGraph.AStar(_currentNode, _waypoints[index]);
+        
+    }
+
+    private void LateUpdate()
+    {
+        if (_navigationGraph.GetPathList().Count != 0 && _currentWaypointInPath != _navigationGraph.GetPathList().Count)
         {
-            if (Vector3.Distance(_tracker.transform.position, waypoints[_currentWaypointIndex].transform.position) <
-                waypointArrivalThreshold)
+            if (Vector3.Distance(_navigationGraph.GetPathList()[_currentWaypointInPath].GetId().transform.position,
+                    transform.position) < _accuracy)
             {
-                _currentWaypointIndex++;
+                _currentNode = _navigationGraph.GetPathList()[_currentWaypointInPath].GetId();
+                _currentWaypointInPath++;
             }
-
-            if (_currentWaypointIndex >= waypoints.Length)
+            if(_currentWaypointInPath < _navigationGraph.GetPathList().Count)
             {
-                _currentWaypointIndex = 0;
+                _target = _navigationGraph.GetPathList()[_currentWaypointInPath].GetId().transform;
+                Vector3 lookAtGoal = new Vector3(_target.position.x, transform.position.y, _target.position.z);
+                Vector3 direction = lookAtGoal - transform.position;
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), Time.deltaTime * _rotationalSpeed);
+                transform.Translate(Vector3.forward * _speed * Time.deltaTime);
             }
-
-            _tracker.transform.LookAt(waypoints[_currentWaypointIndex].transform);
-            _tracker.transform.Translate(_tracker.transform.forward * (speed + _trackerSpeedBoost) * Time.deltaTime,
-                Space.World);
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        ProgressTracker();
-        
-        Quaternion lookAtWaypoint = Quaternion.LookRotation(_tracker.transform.position - transform.position);
-        
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookAtWaypoint, Time.deltaTime * rotationalSpeed);
-        
-        transform.Translate(Vector3.forward * speed * Time.deltaTime);
     }
 }
