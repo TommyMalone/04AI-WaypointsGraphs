@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FollowWP : MonoBehaviour
+public class FollowWaypoint : MonoBehaviour
 {
     public GameObject[] waypoints;
     int _currentWaypointIndex = 0;
