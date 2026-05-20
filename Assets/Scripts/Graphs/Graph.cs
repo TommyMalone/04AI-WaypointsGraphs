@@ -56,65 +56,69 @@ public class Graph
 
     public bool AStar(GameObject startId, GameObject endId)
     {
-        Node start = FindNode(startId);
-        Node end = FindNode(endId);
-
-        if (start != null && end != null)
+        if (startId != endId)
         {
-            List<Node> open = new List<Node>();
-            List<Node> closed = new List<Node>();
-            float tentativeGScore = 0;
-            bool tentativeIsBetter = false;
+            Node start = FindNode(startId);
+            Node end = FindNode(endId);
 
-            start.g = 0;
-            start.h = DistanceSquared(start, end);
-            start.f = start.g + start.h;
-
-            open.Add(start);
-            while (open.Count > 0)
+            if (start != null && end != null)
             {
-                int indexOfLowestF = FindIndexOfLowestF(open);
-                Node thisNode = open[indexOfLowestF];
-                if (thisNode.GetId() == endId)
-                {
-                    ReconstructPath(start, end);
-                    return true;
-                }
+                List<Node> open = new List<Node>();
+                List<Node> closed = new List<Node>();
+                float tentativeGScore = 0;
+                bool tentativeIsBetter = false;
 
-                open.RemoveAt(indexOfLowestF);
-                closed.Add(thisNode);
-                Node neighbor;
-                foreach (Edge edge in thisNode.edges)
+                start.g = 0;
+                start.h = DistanceSquared(start, end);
+                start.f = start.g + start.h;
+
+                open.Add(start);
+                while (open.Count > 0)
                 {
-                    neighbor = edge.endNode;
-                    if (closed.IndexOf(neighbor) <= -1)
+                    int indexOfLowestF = FindIndexOfLowestF(open);
+                    Node thisNode = open[indexOfLowestF];
+                    if (thisNode.GetId() == endId)
                     {
-                        tentativeGScore = thisNode.g + DistanceSquared(thisNode, neighbor);
-                        if (open.IndexOf(neighbor) == -1)
-                        {
-                            open.Add(neighbor);
-                            tentativeIsBetter = true;
-                        }
-                        else if (tentativeGScore < neighbor.g)
-                        {
-                            tentativeIsBetter = true;
-                        }
-                        else
-                        {
-                            tentativeIsBetter = false;
-                        }
+                        ReconstructPath(start, end);
+                        return true;
+                    }
 
-                        if (tentativeIsBetter)
+                    open.RemoveAt(indexOfLowestF);
+                    closed.Add(thisNode);
+                    Node neighbor;
+                    foreach (Edge edge in thisNode.edges)
+                    {
+                        neighbor = edge.endNode;
+                        if (closed.IndexOf(neighbor) <= -1)
                         {
-                            neighbor.cameFrom = thisNode;
-                            neighbor.g = tentativeGScore;
-                            neighbor.h = DistanceSquared(neighbor, end);
-                            neighbor.f = neighbor.g + neighbor.h;
+                            tentativeGScore = thisNode.g + DistanceSquared(thisNode, neighbor);
+                            if (open.IndexOf(neighbor) == -1)
+                            {
+                                open.Add(neighbor);
+                                tentativeIsBetter = true;
+                            }
+                            else if (tentativeGScore < neighbor.g)
+                            {
+                                tentativeIsBetter = true;
+                            }
+                            else
+                            {
+                                tentativeIsBetter = false;
+                            }
+
+                            if (tentativeIsBetter)
+                            {
+                                neighbor.cameFrom = thisNode;
+                                neighbor.g = tentativeGScore;
+                                neighbor.h = DistanceSquared(neighbor, end);
+                                neighbor.f = neighbor.g + neighbor.h;
+                            }
                         }
                     }
                 }
             }
         }
+        _pathList.Clear();
         return false;
     }
 
