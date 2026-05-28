@@ -1,4 +1,5 @@
 using System;
+using Graphs;
 using UnityEngine;
 
 public class FollowWaypoint : MonoBehaviour

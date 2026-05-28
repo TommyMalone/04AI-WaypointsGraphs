@@ -1,13 +1,13 @@
-using UnityEngine;
+using Graphs;
 
 public class Edge
 {
-    public Node startNode; 
-    public Node endNode;
+    public Node StartNode; 
+    public Node EndNode;
     
     public Edge(Node from, Node to)
     {
-        startNode = from;
-        endNode = to;
+        StartNode = from;
+        EndNode = to;
     }
 }
