@@ -17,7 +17,7 @@ public class FollowWaypoint : MonoBehaviour
     
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
         _waypoints = waypointManager.GetComponent<WaypointManager>().waypoints;
         _navigationGraph = waypointManager.GetComponent<WaypointManager>().graph;

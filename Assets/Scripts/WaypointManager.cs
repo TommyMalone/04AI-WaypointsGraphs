@@ -23,7 +23,7 @@ public class WaypointManager : MonoBehaviour
     public Link[] links;
     public Graph graph = new Graph();
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
         if (waypoints.Length > 0)
         {
@@ -37,11 +37,5 @@ public class WaypointManager : MonoBehaviour
                 graph.AddEdge(link.node1, link.node2, link.linkDirection);
             }
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

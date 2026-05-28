@@ -138,12 +138,12 @@ namespace Graphs
             _pathList.Insert(0,startId);
         }
 
-        float DistanceSquared(Node a, Node b)
+        private float DistanceSquared(Node a, Node b)
         {
             return Vector3.SqrMagnitude(a.GetId().transform.position - b.GetId().transform.position);
         }
-    
-        int FindIndexOfLowestF(List<Node> nodes)
+
+        private int FindIndexOfLowestF(List<Node> nodes)
         {
             float lowestF = 0;
             int count = 0;

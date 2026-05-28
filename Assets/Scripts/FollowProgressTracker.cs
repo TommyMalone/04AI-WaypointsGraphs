@@ -3,24 +3,23 @@ using UnityEngine;
 public class FollowProgressTracker : MonoBehaviour
 {
     public GameObject[] waypoints;
-    int _currentWaypointIndex = 0;
+    private int _currentWaypointIndex = 0;
     public float speed = 10f;
     public float rotationalSpeed = 5f;
     public int waypointArrivalThreshold = 5;
     private GameObject _tracker;
-    private int _trackerSpeedBoost = 2;
+    private readonly int _trackerSpeedBoost = 2;
     public float lookAhead = 10f;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
-        _tracker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        DestroyImmediate(_tracker.GetComponent<Collider>());
+        _tracker = new GameObject();
         _tracker.transform.position = transform.position;
         _tracker.transform.rotation = transform.rotation;
     }
 
-    void ProgressTracker()
+    private void ProgressTracker()
     {
         if (Vector3.Distance(_tracker.transform.position, transform.position) < lookAhead)
         {
@@ -42,7 +41,7 @@ public class FollowProgressTracker : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         ProgressTracker();
         
